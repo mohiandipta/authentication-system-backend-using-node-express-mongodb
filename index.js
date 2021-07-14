@@ -3,18 +3,29 @@ const app = express()
 const port = 3000 || process.env.PORT
 const mongoose = require('mongoose')
 const cors = require('cors')
-const bodyParser = require('body-parser')
 require('dotenv/config')
 
-// const router = require('./routes/user')
+const api = process.env.API_URl
 
 
+
+// middleware method
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 
 
+// routes
+const usersRouter = require('./routes/user.router')
+
+
+app.use(`${api}/User`, usersRouter)
+
+
+
+
+// database
 mongoose.connect(process.env.CONNECTION_STRING,
     {
         useNewUrlParser: true,
@@ -34,5 +45,6 @@ mongoose.connect(process.env.CONNECTION_STRING,
 
 
 app.listen(port, () => {
+    console.log(api)
     console.log("server is running at localhost:" + port)
 })
