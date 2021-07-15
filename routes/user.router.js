@@ -1,30 +1,37 @@
+const { User } = require('../models/user.model') // user model path
 const express = require('express')
-const { User } = require('../models/user.model')
 const router = express.Router()
 
-// signin
-router.get('/', async (req, res) => {
-    let userList = await User.find()
-    user = User.save()
-    if (!userList) {
+
+
+// GET user
+router.get(`/signin`, async (req, res) => {
+    let user = await User.find()
+    if (!user) {
         console.log('the user not found')
+        res.status(500).json({ success: false })
     }
-    res.send(user);
+    res.send(user)
 })
 
 
 
-// signup
-router.post('/', async (req, res) => {
+// POST user
+router.post(`/signup`, (req, res) => {
     let user = new User({
         email: req.body.email,
         password: req.body.password
     })
-    user = await User.save()
-    if (!user) {
-        console.log('the user can not be created')
-    }
-    res.send(user);
+    user.save()
+        .then((createdUser => {
+            res.status(200).json(createdUser)
+        }))
+        .catch((err) => {
+            res.status(500).json({
+                error: err,
+                success: false
+            })
+        })
 })
 
 
