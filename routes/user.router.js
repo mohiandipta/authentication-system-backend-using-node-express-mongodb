@@ -5,7 +5,7 @@ const router = express.Router()
 
 
 // GET user
-router.get(`/`, async (req, res) => {
+router.get('/', async (req, res) => {
     let user = await User.find()
     if (!user) {
         console.log('the user not found')
@@ -15,53 +15,25 @@ router.get(`/`, async (req, res) => {
 })
 
 
-
 // POST user
-router.post(`/signup`, (req, res) => {
-    const user = User.findOne({ email: req.body.email, password: req.body.password }, (err, user) => {
-        if (err) {
-            console.log(err)
-            res.json(err)
-        } else {
-            res.json(user)
-        }
-    })
-    user = new User({
+// router.post('/signin', async (req, res) => {
+//     const user = await User.findOne({ email: req.body.email, password: req.body.password })
+//     if (!user) {
+//         return res.status(500).json({ message: 'User not found, Please create an user or check again' })
+//     }
+// })
+
+// POST user signup
+router.post('/signup', async (req, res) => {
+    let user = new User({
         email: req.body.email,
         password: req.body.password
     })
-    user.save()
-        .then((createdUser => {
-            res.status(200).json(createdUser)
-        }))
-        .catch((err) => {
-            res.status(500).json({
-                error: err,
-                success: false
-            })
-        })
-})
-
-// POST user signin
-router.post(`/signin`, (req, res) => {
-    let user = User.findOne({ email: req.body.email, password: req.body.password }, (err, user) => {
-        if (err) {
-            console.log(err)
-            res.json(err)
-        } else {
-            res.json(user)
-        }
-    })
-    user.save()
-        .then((createdUser => {
-            res.status(200).json(createdUser)
-        }))
-        .catch((err) => {
-            res.status(500).json({
-                error: err,
-                success: false
-            })
-        })
+    user = await user.save();
+    if (!user) {
+        console.log('the user can not be created')
+    }
+    res.send(user);
 })
 
 
